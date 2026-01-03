@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AI Personalised Doctor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #1a73e8;
+            --primary-teal: #0d9488;
+            --primary-green: #10b981;
+            --accent-purple: #8b5cf6;
+            --accent-rose: #f43f5e;
+            --accent-amber: #f59e0b;
+            --light-bg: #f8fafc;
+            --dark-bg: #1e293b;
+            --text-dark: #334155;
+            --text-light: #64748b;
+            --border-light: #e2e8f0;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            color: var(--text-dark);
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+
+        /* Enhanced Navbar */
+        .navbar {
+            background: linear-gradient(135deg, var(--dark-bg) 0%, #0f172a 100%);
+            padding: 1rem 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border-bottom: 3px solid var(--primary-teal);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: white !important;
+            letter-spacing: 0.5px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-circle {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary-teal), var(--primary-blue));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500;
+            padding: 0.5rem 1.2rem !important;
+            border-radius: 20px;
+            margin: 0 2px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.15);
+            color: white !important;
+            transform: translateY(-1px);
+        }
+
+        .navbar-toggler {
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Main Content */
+        .page-header {
+            text-align: center;
+            margin: 3rem 0 2rem;
+            position: relative;
+        }
+
+        .page-header h1 {
+            color: var(--dark-bg);
+            font-weight: 800;
+            font-size: 2.8rem;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-teal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            display: inline-block;
+        }
+
+        .page-header h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--primary-teal));
+            border-radius: 2px;
+        }
+
+        /* Form Container */
+        .form-container {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--border-light);
+            margin-bottom: 3rem;
+            transition: transform 0.3s ease;
+        }
+
+        .form-container:hover {
+            transform: translateY(-2px);
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--dark-bg);
+            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
+            display: block;
+        }
+
+        .form-control {
+            padding: 1rem 1.2rem;
+            border: 2px solid var(--border-light);
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-teal);
+            box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1);
+        }
+
+        /* Voice Input Section */
+        .voice-section {
+            background: linear-gradient(135deg, #f0f9ff, #f8fafc);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border: 2px dashed #cbd5e1;
+        }
+
+        .btn-voice {
+            background: linear-gradient(135deg, var(--accent-purple), #7c3aed);
+            border: none;
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-voice:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+        }
+
+        .transcription-box {
+            background: white;
+            border-radius: 12px;
+            padding: 1.2rem;
+            margin-top: 1.2rem;
+            border: 2px solid #e2e8f0;
+            min-height: 80px;
+        }
+
+        /* Submit Button */
+        .btn-submit {
+            background: linear-gradient(135deg, var(--accent-rose), #e11d48);
+            border: none;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            width: 100%;
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+            box-shadow: 0 6px 20px rgba(244, 63, 94, 0.25);
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(244, 63, 94, 0.35);
+        }
+
+        /* Results Section */
+        .results-section {
+            scroll-margin-top: 100px;
+            padding-top: 2rem;
+        }
+
+        .results-header {
+            text-align: center;
+            margin: 3rem 0 2rem;
+            position: relative;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .results-header h2 {
+            color: var(--dark-bg);
+            font-weight: 700;
+            font-size: 2.2rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .results-header h2::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: var(--accent-amber);
+            border-radius: 2px;
+        }
+
+        .result-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1.2rem;
+            margin: 2rem 0;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        .result-btn {
+            padding: 1.2rem 1rem;
+            border: none;
+            border-radius: 15px;
+            font-weight: 600;
+            font-size: 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            min-height: 120px;
+            transform: translateY(0);
+        }
+
+        .result-btn:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .result-btn:active {
+            transform: translateY(-2px);
+        }
+
+        .btn-disease {
+            background: linear-gradient(135deg, #fef3c7, #fbbf24);
+            color: #92400e;
+        }
+        .btn-description {
+            background: linear-gradient(135deg, #dbeafe, #60a5fa);
+            color: #1e40af;
+        }
+        .btn-precaution {
+            background: linear-gradient(135deg, #ede9fe, #a78bfa);
+            color: #5b21b6;
+        }
+        .btn-medications {
+            background: linear-gradient(135deg, #fee2e2, #f87171);
+            color: #991b1b;
+        }
+        .btn-workouts {
+            background: linear-gradient(135deg, #dcfce7, #34d399);
+            color: #065f46;
+        }
+        .btn-diets {
+            background: linear-gradient(135deg, #fef9c3, #facc15);
+            color: #854d0e;
+        }
+
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: fixed;
+            right: 30px;
+            bottom: 30px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-teal));
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .scroll-indicator.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .scroll-indicator:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        /* Modals */
+        .modal-content {
+            overflow: hidden;
+            border: none;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--dark-bg), var(--primary-blue));
+            color: white;
+            padding: 1.5rem 2rem;
+            border: none;
+        }
+
+        .modal-title {
+            font-weight: 700;
+            font-size: 1.3rem;
+        }
+
+        .modal-body {
+            padding: 2rem;
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+
+        .modal-body ul {
+            padding-left: 1.2rem;
+        }
+
+        .modal-body li {
+            margin-bottom: 0.8rem;
+            color: var(--text-dark);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--dark-bg);
+            color: rgba(255, 255, 255, 0.8);
+            padding: 3rem 0 2rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+
+        /* Loading Animation */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .loading-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary-teal);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 2.2rem;
+            }
+
+            .form-container {
+                padding: 1.5rem;
+            }
+
+            .result-buttons {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+
+            .result-btn {
+                min-height: 100px;
+                padding: 1rem 0.5rem;
+            }
+
+            .scroll-indicator {
+                right: 20px;
+                bottom: 20px;
+                width: 45px;
+                height: 45px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .result-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .navbar-brand {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Scroll to Top Button -->
+    <div class="scroll-indicator" id="scrollToTop">
+        <i class="bi bi-chevron-up" style="font-size: 1.2rem;">↑</i>
+    </div>
+
+    <!-- Enhanced Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <div class="logo-container">
+                <img src="../static/img.png" width="40px" height="40px"/>
+                <a class="navbar-brand" href="#">AI Personalised Doctor</a>
+            </div>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/about">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contact">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/developer">Developer</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/blog">Blog</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container my-4">
+        <div class="page-header">
+            <h1>AI Health Check</h1>
+        </div>
+
+        <!-- Form Section -->
+        <div class="form-container">
+            <form id="predictionForm" action="/predict" method="post">
+                <div class="mb-4">
+                    <label for="symptoms" class="form-label">Describe Your Symptoms</label>
+                    <input type="text" class="form-control" id="symptoms" name="symptoms"
+                           placeholder="Enter symptoms like such as itching, sleeping, aching etc" required>
+                </div>
+
+                <!-- Voice Input Section -->
+                <div class="voice-section">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <label class="form-label mb-0">Voice Input</label>
+                        <button type="button" id="startSpeechRecognition" class="btn-voice">
+                            Start Voice Input
+                        </button>
+                    </div>
+                    <div class="transcription-box">
+                        <div id="transcription" class="text-muted">
+                            Transcribed text will appear here...
+                        </div>
+                    </div>
+                    {% if message %}
+                    <div class="alert alert-info mt-3" role="alert">
+                        {{ message }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn-submit mt-4">
+                    Get Prediction
+                </button>
+            </form>
+        </div>
+
+        {% if predicted_disease %}
+        <!-- Results Section -->
+        <div class="results-section" id="resultsSection">
+            <div class="results-header">
+                <h2>AI Doctor Analysis Results</h2>
+            </div>
+
+            <div class="result-buttons">
+                <button class="result-btn btn-disease" data-bs-toggle="modal" data-bs-target="#diseaseModal">
+                    Condition
+                </button>
+
+                <button class="result-btn btn-description" data-bs-toggle="modal" data-bs-target="#descriptionModal">
+                    Description
+                </button>
+
+                <button class="result-btn btn-precaution" data-bs-toggle="modal" data-bs-target="#precautionModal">
+                    Precautions
+                </button>
+
+                <button class="result-btn btn-medications" data-bs-toggle="modal" data-bs-target="#medicationsModal">
+                    Medications
+                </button>
+
+                <button class="result-btn btn-workouts" data-bs-toggle="modal" data-bs-target="#workoutsModal">
+                    Activities
+                </button>
+
+                <button class="result-btn btn-diets" data-bs-toggle="modal" data-bs-target="#dietsModal">
+                    Nutrition
+                </button>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Modals -->
+    <div class="modal fade" id="diseaseModal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Identified Health Condition</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>{{ predicted_disease }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="descriptionModal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Condition Description</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>{{ dis_des }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="precautionModal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Health Precautions</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <ul>
+                        {% for i in my_precautions %}
+                        <li>{{ i }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="medicationsModal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Medication Guidance</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <ul>
+                        {% for i in medications %}
+                        <li>{{ i }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="workoutsModal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Recommended Activities</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <ul>
+                        {% for i in workout %}
+                        <li>{{ i }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="dietsModal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Dietary Recommendations</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <ul>
+                        {% for i in my_diet %}
+                        <li>{{ i }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.js"></script>
+    <script>
+        // Enhanced Speech Recognition
+        const startBtn = document.getElementById('startSpeechRecognition');
+        const transcriptionDiv = document.getElementById('transcription');
+
+        startBtn.addEventListener('click', function() {
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                const recognition = new SpeechRecognition();
+
+                recognition.lang = 'en-US';
+                recognition.interimResults = false;
+                recognition.continuous = false;
+
+                recognition.onstart = function() {
+                    transcriptionDiv.innerHTML = '<span class="text-primary"><em> Listening... Please speak clearly about your symptoms</em></span>';
+                    startBtn.innerHTML = '🔴 Recording...';
+                    startBtn.classList.add('btn-danger');
+                    startBtn.classList.remove('btn-voice');
+                };
+
+                recognition.onresult = function(event) {
+                    const transcript = event.results[0][0].transcript;
+                    transcriptionDiv.innerHTML = `<strong>${transcript}</strong>`;
+                    document.getElementById('symptoms').value = transcript;
+                };
+
+                recognition.onerror = function(event) {
+                    transcriptionDiv.innerHTML = '<span class="text-danger">⚠️ Error occurred. Please try again or type your symptoms.</span>';
+                };
+
+                recognition.onend = function() {
+                    startBtn.innerHTML = '🎤 Start Voice Input';
+                    startBtn.classList.remove('btn-danger');
+                    startBtn.classList.add('btn-voice');
+                };
+
+                recognition.start();
+            } else {
+                transcriptionDiv.innerHTML = '<span class="text-danger">⚠️ Voice input not supported in your browser. Please type your symptoms.</span>';
+            }
+        });
+
+        // Update symptoms input when transcription changes
+        transcriptionDiv.addEventListener('DOMSubtreeModified', function() {
+            if (this.textContent && this.textContent !== 'Transcribed text will appear here...') {
+                document.getElementById('symptoms').value = this.textContent;
+            }
+        });
+
+        // Form submission with smooth scroll to results
+        document.getElementById('predictionForm').addEventListener('submit', function(e) {
+            const symptomsInput = document.getElementById('symptoms');
+
+            // Validate symptoms input
+            if (!symptomsInput.value.trim()) {
+                e.preventDefault();
+                symptomsInput.focus();
+                symptomsInput.style.borderColor = '#f43f5e';
+                return false;
+            }
+
+            // If results are already shown (page reload), scroll to them
+            {% if predicted_disease %}
+            e.preventDefault();
+            scrollToResults();
+            return false;
+            {% endif %}
+        });
+
+        // Function to scroll to results section
+        function scrollToResults() {
+            const resultsSection = document.getElementById('resultsSection');
+            if (resultsSection) {
+                // Show loading overlay
+                const loadingOverlay = document.getElementById('loadingOverlay');
+                loadingOverlay.classList.add('show');
+
+                // Simulate loading time for better UX
+                setTimeout(() => {
+                    loadingOverlay.classList.remove('show');
+                    resultsSection.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+
+                    // Add highlight animation
+                    resultsSection.style.animation = 'none';
+                    setTimeout(() => {
+                        resultsSection.style.animation = 'fadeInUp 0.8s ease';
+                    }, 10);
+                }, 800);
+            }
+        }
+
+        // Scroll to top functionality
+        const scrollToTopBtn = document.getElementById('scrollToTop');
+
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                scrollToTopBtn.classList.add('show');
+            } else {
+                scrollToTopBtn.classList.remove('show');
+            }
+        });
+
+        scrollToTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Add subtle scroll animation to result buttons
+        document.addEventListener('DOMContentLoaded', () => {
+            const resultButtons = document.querySelectorAll('.result-btn');
+            resultButtons.forEach((btn, index) => {
+                btn.style.animationDelay = `${index * 0.1}s`;
+            });
+
+            // Auto-scroll to results if coming from form submission
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('submitted') && document.getElementById('resultsSection')) {
+                setTimeout(() => {
+                    scrollToResults();
+                }, 500);
+            }
+        });
+
+        // Add form data persistence (optional)
+        document.getElementById('symptoms').addEventListener('input', function() {
+            localStorage.setItem('symptoms_input', this.value);
+        });
+
+        // Load saved symptoms if exists
+        const savedSymptoms = localStorage.getItem('symptoms_input');
+        if (savedSymptoms && document.getElementById('symptoms')) {
+            document.getElementById('symptoms').value = savedSymptoms;
+            transcriptionDiv.innerHTML = `<strong>${savedSymptoms}</strong>`;
+        }
+    </script>
+</body>
+</html>

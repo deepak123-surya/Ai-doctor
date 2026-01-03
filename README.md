@@ -1,1 +1,1 @@
-# Ai-doctor
+# AI-Doctor
